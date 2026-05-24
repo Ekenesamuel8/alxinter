@@ -7,6 +7,7 @@ type GenerateQuestionsRequest = {
 
 function parseQuestions(text: string): string[] {
   try {
+    // Prefer the JSON array requested in the prompt.
     const parsed = JSON.parse(text) as unknown;
 
     if (
@@ -19,6 +20,7 @@ function parseQuestions(text: string): string[] {
     // Fall back to parsing plain text if the model does not return strict JSON.
   }
 
+  // Accept simple numbered or bulleted text if Gemini returns plain text.
   return text
     .split(/\r?\n/)
     .map((line) => line.replace(/^\s*(?:\d+[\).\s-]+|[-*]\s+)/, "").trim())
@@ -59,6 +61,7 @@ export async function POST(request: Request) {
   try {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
+      // Allow deployment-specific model changes without editing source code.
       model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
       contents: `Generate exactly 5 concise interview questions for this topic: ${topic}. Return only a JSON array of strings.`,
       config: {

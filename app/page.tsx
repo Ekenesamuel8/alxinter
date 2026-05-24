@@ -12,6 +12,8 @@ export default function Home() {
     event.preventDefault();
 
     const trimmedTopic = topic.trim();
+
+    // Reset previous results before starting a new request.
     setQuestions([]);
     setError("");
 
@@ -23,6 +25,7 @@ export default function Home() {
     setLoading(true);
 
     try {
+      // Call the backend route so the Gemini API key stays on the server.
       const response = await fetch("/api/generate-questions", {
         method: "POST",
         headers: {
